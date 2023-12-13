@@ -2,14 +2,18 @@
   "name": "vite-project",
   "private": true,
   "version": "0.0.0",
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "electron": "concurrently -k \"cross-env NODE_ENV=development && vite\" \"npm run dev && electron .\""
+    "electron:dev": "concurrently -k \"cross-env NODE_ENV=development && yarn dev --port 4000\" \"wait-on tcp:4000 && electron .\""
   },
   "dependencies": {
-    "vue": "^3.3.8"
+    "sass": "^1.69.5",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",

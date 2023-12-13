@@ -1,24 +1,17 @@
 <template>
-  <div class="text-xl bg-slate-50">
-    다국어 지원 관리
+  <div class="body">
+    <router-view name="HomePage">
+      <HomePage />
+    </router-view>
   </div>
 </template>
 
 <script setup lang="ts">
-
+import HomePage from './pages/Home/index.vue'
 </script>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.body {
+  height: 100%;
 }
 </style>

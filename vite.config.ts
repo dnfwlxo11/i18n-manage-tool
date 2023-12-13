@@ -6,4 +6,9 @@ const path = require("path")
 export default defineConfig({
   base: process.env.NODE_ENV === "production" ? path.resolve(__dirname, "dist") : "",
   plugins: [vue()],
+  resolve: {
+    alias: {
+      '@/*': path.resolve(__dirname, './src')
+    }
+  },
 })
