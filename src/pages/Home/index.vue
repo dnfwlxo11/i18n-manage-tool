@@ -39,16 +39,6 @@ const c_menus = computed(() => {
   }
 })
 
-const f_selectDirectory = () => {
-  console.log(dialog, remote)
-  // ipcRenderer.send("openDialog", "directory")
-  remote.dialog.showOpenDialog({
-    properties: [
-      'openDirectory'
-    ]
-  })
-}
-
 onMounted(() => {
   console.log(useRoute())
 })

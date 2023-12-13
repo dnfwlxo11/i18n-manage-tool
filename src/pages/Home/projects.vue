@@ -5,8 +5,9 @@
     </div>
     <div class="projects grid grid-cols-3 gap-8">
       <div 
-        v-for="item of 10"
-        class="shadow-lg relative p-4 flex flex-col align-middle rounded-md min-h-[240px]"
+        v-for="item of 5"
+        class="hover:cursor-pointer shadow-lg relative p-4 flex flex-col align-middle rounded-md min-h-[240px]"
+        @click="router.push(`/project/${item}`)"
       >
         <div class="image_wrapper w-14 mb-4">
           <img class="h-full w-full object-contain" src="/vite.svg">
@@ -31,7 +32,7 @@
         </div>
       </div>
       <div 
-        class="flex flex-col justify-center min-h-[240px] rounded-md shadow-md"
+        class="hover:cursor-pointer flex flex-col justify-center min-h-[240px] rounded-md shadow-md"
         @click="_isProjectSetting=true"
       >
         <svgIcon 
@@ -46,17 +47,29 @@
         </span>
       </div>
     </div>
-    <projectSettingModal v-if="_isProjectSetting" @modal:close="_isProjectSetting=false" />
+    <projectSettingModal 
+      v-if="_isProjectSetting" 
+      @modal:create="f_createProject"
+      @modal:close="_isProjectSetting=false" 
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import svgIcon from '../../components/basic/svgIcon.vue'
 import badge from '../../components/basic/badge.vue'
 import projectSettingModal from '../../components/modal/projectSetting.vue'
 
 const _isProjectSetting = ref(false)
+const router = useRouter()
+
+const f_createProject = () => {
+  console.log('clicked')
+  _isProjectSetting.value = false
+  router.push('/project/1')
+}
 </script>
 
 <style lang="scss" scoped>
