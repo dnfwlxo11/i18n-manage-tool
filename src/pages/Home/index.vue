@@ -38,8 +38,4 @@ const c_menus = computed(() => {
       return projectPage
   }
 })
-
-onMounted(() => {
-  console.log(useRoute())
-})
 </script>

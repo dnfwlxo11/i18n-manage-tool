@@ -5,7 +5,7 @@
     </div>
     <div class="projects grid grid-cols-3 gap-8">
       <div 
-        v-for="item of 5"
+        v-for="item of ['AIONE', 'DEEPPAD']"
         class="hover:cursor-pointer shadow-lg relative p-4 flex flex-col align-middle rounded-md min-h-[240px]"
         @click="router.push(`/project/${item}`)"
       >
@@ -13,7 +13,7 @@
           <img class="h-full w-full object-contain" src="/vite.svg">
         </div>
         <div class="project_name text-md mb-4 font-semibold text-lg">
-          테스트
+          {{ item }}
         </div>
         <div class="languages flex flex-wrap gap-2 mt-auto">
           <badge :content="'한국어'" />
@@ -22,7 +22,10 @@
           <badge :content="'태국어'" />
           <badge :content="'베트남어'" />
         </div>
-        <div class="absolute top-4 right-4">
+        <div 
+          class="absolute top-4 right-4"
+          @click.stop="f_editProject(item, '/test')"
+        >
           <svgIcon 
             src="/icons/edit-outline.svg" 
             width="24px"
@@ -33,7 +36,7 @@
       </div>
       <div 
         class="hover:cursor-pointer flex flex-col justify-center min-h-[240px] rounded-md shadow-md"
-        @click="_isProjectSetting=true"
+        @click="(_currentSettingType='create',_isProjectSetting=false)"
       >
         <svgIcon 
           class="block ml-auto mr-auto mb-5"
@@ -49,6 +52,9 @@
     </div>
     <projectSettingModal 
       v-if="_isProjectSetting" 
+      :type="_currentSettingType"
+      :title="_currentProjectTitle"
+      :projectPath="_currentProjectPath"
       @modal:create="f_createProject"
       @modal:close="_isProjectSetting=false" 
     />
@@ -65,10 +71,20 @@ import projectSettingModal from '../../components/modal/projectSetting.vue'
 const _isProjectSetting = ref(false)
 const router = useRouter()
 
+const _currentSettingType = ref('create')
+const _currentProjectTitle = ref()
+const _currentProjectPath = ref()
+
 const f_createProject = () => {
-  console.log('clicked')
   _isProjectSetting.value = false
   router.push('/project/1')
+}
+
+const f_editProject = (name: string, path: string) => {
+  _currentSettingType.value = 'edit'
+  _currentProjectTitle.value = name
+  _currentProjectPath.value = path
+  _isProjectSetting.value = true
 }
 </script>
 

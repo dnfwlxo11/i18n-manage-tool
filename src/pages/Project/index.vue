@@ -31,7 +31,7 @@
       </div>
       <div class="mb-7">
         <button v-if="r_excel" class="border-[#2962ec] text-[#2962ec] mr-3 p-2 pt-1 pb-1 hover:bg-[#2962ec] hover:text-white" @click="r_excel.click()">엑셀 가져오기</button>
-        <button class="border-[#2962ec] text-[#2962ec] mr-3 p-2 pt-1 pb-1 hover:bg-[#2962ec] hover:text-white">구글 시트 연동</button>
+        <button class="border-[#2962ec] text-[#2962ec] mr-3 p-2 pt-1 pb-1 hover:bg-[#2962ec] hover:text-white" @click="_googleSheetModal=true">구글 시트 연동</button>
         <input 
           ref="r_excel" 
           class="input" 
@@ -83,7 +83,7 @@
         <span class="mr-3">아직 번역 시트가 존재하지 않습니다.</span>
         <button class="bg-slate-300 text-black mr-3 p-2 pt-1 pb-1">새로만들기</button>
       </div>
-      <div v-if="_sheets?.length" class="flex opacity-20 hover:opacity-100 w-full overflow-auto h-[60px]">
+      <div v-if="_sheets?.length" class="mb-3 flex opacity-20 hover:opacity-100 w-full overflow-auto h-[60px]">
         <div 
           :class="{ 'bg-slate-400': sheet.sheetName === _targetSheet.sheetName }"
           class="box-border h-full p-2 bg-slate-300 mr-[2px] font-semibold hover:bg-slate-400"
@@ -94,15 +94,23 @@
           {{ sheet.sheetName }}
         </div>
       </div>
+      <button v-if="r_excel" class="mt-auto hover:border-[#2962ec] hover:bg-white hover:text-[#2962ec] mr-3 p-2 pt-1 pb-1 bg-[#2962ec] text-white" @click="r_excel.click()">프로젝트에 적용</button>
     </div>
+    <googleSheetSyncModal 
+      v-if="_googleSheetModal" 
+      @modal:add="v => connGoogleApis(v.spreadsheetId, v.apiJson)"
+      @modal:close="_googleSheetModal=false"
+    />
   </div>
 </template>
 
 <script setup>
 import projectLeftSide from '../../components/nav/projectLeftSide.vue'
+import googleSheetSyncModal from '../../components/modal/googleSheetSync.vue'
 import svgIcon from '../../components/basic/svgIcon.vue'
 
 import * as XLSX from 'xlsx'
+const { google } = require('googleapis')
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 
@@ -112,6 +120,8 @@ const r_excel = ref()
 const _filename = ref()
 const _sheets = ref([])
 const _targetSheet = ref()
+const _googleSheetModal = ref(false)
+const _googleSync = ref(false)
 
 const f_readXlsx = (evt) => {
   let input = evt.target;
@@ -133,8 +143,63 @@ const f_readXlsx = (evt) => {
   };
 
   reader.readAsBinaryString(input.files[0])
-  console.log(_sheets.value)
 }
+
+async function connGoogleApis(spreadsheetId, apiJson) {
+  if (!spreadsheetId || !apiJson?.client_email || !apiJson.private_key) return
+
+  const CLIENT_EMAIL = apiJson.client_email
+  const PRIVATE_KEY = apiJson.private_key
+
+  _sheets.value = []
+
+  const auth = new google.auth.JWT(
+    CLIENT_EMAIL,
+    null,
+    PRIVATE_KEY,
+    [ 'https://www.googleapis.com/auth/spreadsheets' ]
+  )
+
+  const googleSheet = google.sheets({
+    version: "v4",
+    auth: auth
+  })
+
+  const content = await googleSheet.spreadsheets.get({ 
+    spreadsheetId
+  })
+
+  const sheets = content.data.sheets
+  for await (let sheet of sheets) {
+    const sheetName = sheet.properties.title
+    const sheetId = sheet.properties.sheetId
+
+    const rows = await googleSheet.spreadsheets.values.get({
+      spreadsheetId,
+      range: `${sheetName}!A1:ZZ`
+    })
+
+    const keys = rows.data.values[0]
+    const data = rows.data.values.slice(1).reduce((acc, item) => {
+      const tmpObj = {}
+      item.map((value, idx) => tmpObj[keys[idx]] = value)
+
+      acc.push(tmpObj)
+
+      return acc
+    }, [])
+
+    _sheets.value.push({ 
+      sheetName, 
+      rows: data
+    })
+    
+    _targetSheet.value = _sheets.value[0]
+  }
+  
+  _googleSheetModal.value = false
+}
+
 </script>
 
 <style lang="scss" scoped>

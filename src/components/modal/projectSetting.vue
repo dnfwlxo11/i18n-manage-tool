@@ -12,7 +12,7 @@
           <div class="text-sm mb-1">프로젝트 명</div>
           <div class="flex">
             <div class="box-border flex-1 mr-3 p-2 pt-1 pb-1 border-solid border-[0.5px] border-slate-500 rounded-md">
-              <input class="w-full" type="text" @input="evt => _projectName = evt.target" v-model="_projectName">
+              <input class="w-full" type="text" @input="evt => _projectName = evt.target.value" v-model="_projectName">
             </div>
           </div>
         </div>
@@ -43,14 +43,20 @@
 </template>
 
 <script setup>
-import { computed, toRefs, ref } from 'vue'
+import { computed, toRefs, ref, watch } from 'vue'
 const { ipcRenderer, dialog, remote } = require('electron')
 
 const $props = defineProps({
   type: {
     type: String,
     default: 'create'
-  }
+  },
+  title: {
+    type: String,
+  },
+  projectPath: {
+    type: String,
+  },
 })
 
 const emit = defineEmits([
@@ -59,7 +65,9 @@ const emit = defineEmits([
 ])
 
 const {
-  type: p_type
+  type: p_type,
+  title: p_title,
+  projectPath: p_projectPath
 } = toRefs($props)
 
 const _projectPath = ref()
@@ -89,6 +97,11 @@ const f_selectDirectory = () => {
 const f_submitModal = () => {
   if (p_type.value === 'create') emit('modal:create')
 }
+
+watch([p_title, p_projectPath], ([title, projectPath]) => {
+  _projectName.value = title
+  _projectPath.value = projectPath
+}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>
