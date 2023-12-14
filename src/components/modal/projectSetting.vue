@@ -1,7 +1,7 @@
 <template>
   <div 
     class="absolute flex left-0 top-0 h-full w-full backdrop-brightness-50" 
-    @click.self="emit('modal:close')"
+    @click.self="emit('modalClose')"
   >
     <div class="pl-5 pr-5 m-auto w-[40%] bg-white shadow-lg rounded-md">
       <div class="text-2xl pt-2 pb-2 border-solid border-b-2 border-gray-100">
@@ -20,7 +20,7 @@
         <div class="mb-6">
           <div class="text-sm mb-1">적용 프로젝트 경로</div>
           <div class="flex">
-            <div class="scroll overflow-auto box-border flex-1 mr-3 p-2 pt-1 pb-1 border-solid border-[0.5px] border-slate-500 rounded-md">
+            <div class="scroll overflow-auto box-border flex-1 mr-3 p-2 pt-1 pb-1 border-solid border-[0.5px] border-slate-500 rounded-md" @click="f_selectDirectory">
               {{ _projectPath }}
             </div>
             <button class="p-2 pt-1 pb-1 w-[70px]" @click="f_selectDirectory">
@@ -43,31 +43,30 @@
 </template>
 
 <script setup>
+import { updateDataById, findDataByFilter } from '../../composable/db.js'
 import { computed, toRefs, ref, watch } from 'vue'
-const { ipcRenderer, dialog, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 
 const $props = defineProps({
+  data: {
+    type: Object,
+    default: () => { return {} }
+  },
   type: {
     type: String,
     default: 'create'
   },
-  title: {
-    type: String,
-  },
-  projectPath: {
-    type: String,
-  },
 })
 
 const emit = defineEmits([
-  'modal:close',
-  'modal:create'
+  'modalClose',
+  'modalCreate',
+  'modalUpdate',
 ])
 
 const {
+  data: p_data,
   type: p_type,
-  title: p_title,
-  projectPath: p_projectPath
 } = toRefs($props)
 
 const _projectPath = ref()
@@ -94,13 +93,30 @@ const f_selectDirectory = () => {
   ipcRenderer.send("openDialog", "directory")
 }
 
-const f_submitModal = () => {
-  if (p_type.value === 'create') emit('modal:create')
+const f_submitModal = async () => {
+  if (p_type.value === 'create') {
+    const response = await findDataByFilter({ projectName: _projectName.value })
+    
+    if (response?.length || !_projectPath.value) return
+
+    emit('modalCreate', {
+      projectName: _projectName.value,
+      projectPath: _projectPath.value,
+    })
+  } else if (p_type.value === 'edit') {
+    const { _id } = p_data.value
+
+    emit('modalUpdate', {
+      id: _id,
+      projectName: _projectName.value,
+      projectPath: _projectPath.value,
+    })
+  }
 }
 
-watch([p_title, p_projectPath], ([title, projectPath]) => {
-  _projectName.value = title
-  _projectPath.value = projectPath
+watch(p_data, ({ _id, projectName, projectPath }) => {
+  _projectName.value = projectName || ''
+  _projectPath.value = projectPath || ''
 }, { immediate: true })
 </script>
 

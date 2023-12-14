@@ -12,6 +12,10 @@ import HomePage from './pages/Home/index.vue'
 <style lang="scss">
 @import url('/fonts/pretendard-subset.css');
 
+#app {
+  min-width: 800px;
+}
+
 body {
   margin: 0;
   font-family: "Pretendard";

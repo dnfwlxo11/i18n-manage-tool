@@ -3,17 +3,17 @@
     <div class="title text-2xl mb-5 font-bold">
       Projects
     </div>
-    <div class="projects grid grid-cols-3 gap-8">
+    <div v-if="_data?.length" class="projects grid grid-cols-3 gap-8">
       <div 
-        v-for="item of ['AIONE', 'DEEPPAD']"
+        v-for="item of _data"
         class="hover:cursor-pointer shadow-lg relative p-4 flex flex-col align-middle rounded-md min-h-[240px]"
-        @click="router.push(`/project/${item}`)"
+        @click="router.push(`/project/${item.projectName}`)"
       >
         <div class="image_wrapper w-14 mb-4">
           <img class="h-full w-full object-contain" src="/vite.svg">
         </div>
         <div class="project_name text-md mb-4 font-semibold text-lg">
-          {{ item }}
+          {{ item.projectName }}
         </div>
         <div class="languages flex flex-wrap gap-2 mt-auto">
           <badge :content="'한국어'" />
@@ -24,7 +24,7 @@
         </div>
         <div 
           class="absolute top-4 right-4"
-          @click.stop="f_editProject(item, '/test')"
+          @click.stop="f_editProject(item)"
         >
           <svgIcon 
             src="/icons/edit-outline.svg" 
@@ -36,7 +36,7 @@
       </div>
       <div 
         class="hover:cursor-pointer flex flex-col justify-center min-h-[240px] rounded-md shadow-md"
-        @click="(_currentSettingType='create',_isProjectSetting=false)"
+        @click="f_createProject"
       >
         <svgIcon 
           class="block ml-auto mr-auto mb-5"
@@ -52,18 +52,19 @@
     </div>
     <projectSettingModal 
       v-if="_isProjectSetting" 
+      :data="_currentData"
       :type="_currentSettingType"
-      :title="_currentProjectTitle"
-      :projectPath="_currentProjectPath"
-      @modal:create="f_createProject"
-      @modal:close="_isProjectSetting=false" 
+      @modalCreate="f_moveProject"
+      @modalUpdate="f_updateProject"
+      @modalClose="_isProjectSetting=false" 
     />
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { findAllData, insertData, updateDataById } from '../../composable/db.js'
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import svgIcon from '../../components/basic/svgIcon.vue'
 import badge from '../../components/basic/badge.vue'
 import projectSettingModal from '../../components/modal/projectSetting.vue'
@@ -71,21 +72,51 @@ import projectSettingModal from '../../components/modal/projectSetting.vue'
 const _isProjectSetting = ref(false)
 const router = useRouter()
 
+const _data = ref()
 const _currentSettingType = ref('create')
 const _currentProjectTitle = ref()
 const _currentProjectPath = ref()
+const _currentData = ref()
+
+const f_moveProject = async (data) => {
+  await insertData(data)
+  _isProjectSetting.value = false
+  await f_init()
+  // router.push('/project/1')
+}
 
 const f_createProject = () => {
-  _isProjectSetting.value = false
-  router.push('/project/1')
-}
-
-const f_editProject = (name: string, path: string) => {
-  _currentSettingType.value = 'edit'
-  _currentProjectTitle.value = name
-  _currentProjectPath.value = path
+  _currentSettingType.value = 'create'
+  _currentProjectTitle.value = ''
+  _currentProjectPath.value = ''
   _isProjectSetting.value = true
 }
+
+const f_editProject = (data) => {
+  _currentSettingType.value = 'edit'
+  _currentData.value = data
+  _isProjectSetting.value = true
+}
+
+const f_updateProject = async (data) => {
+  const { id, projectName, projectPath } = data
+  _currentData.value = data
+
+  await updateDataById(id, { projectName, projectPath })
+  await f_init()
+
+  _isProjectSetting.value = false
+}
+
+const f_init = async () => {
+  _data.value = await findAllData()
+  console.log(_data.value)
+}
+
+onMounted(async () => {
+  await nextTick()
+  await f_init()
+})
 </script>
 
 <style lang="scss" scoped>

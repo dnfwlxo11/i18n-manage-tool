@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted, ref, computed } from 'vue'
 const { ipcRenderer, dialog, remote } = require('electron')

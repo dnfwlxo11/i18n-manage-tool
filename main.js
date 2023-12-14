@@ -1,7 +1,10 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
-const electronReload = require('electron-reload')
+const { initialize, enable } = require('@electron/remote/main')
+const Datastore = require('nedb-promises')
 const path = require('path')
 const env = process.env.NODE_ENV || 'development'
+
+initialize()
 
 // If development environment
 // if (env === 'development') {
@@ -10,7 +13,7 @@ const env = process.env.NODE_ENV || 'development'
 //   })
 // }
 
-function createWindow() {
+async function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1280,
@@ -18,16 +21,18 @@ function createWindow() {
     webPreferences: {
       // preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
-      enableremotemodule: true,
       contextIsolation: false,
+      // sandbox: false
     }
   })
 
-  if (env === 'development') mainWindow.loadURL('http://localhost:4000')
+  enable(mainWindow.webContents)
+
+  if (env === 'development') await mainWindow.loadURL('http://localhost:4000')
   else mainWindow.loadFile(path.join(__dirname, 'index.html'))
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
@@ -42,7 +47,19 @@ app.whenReady().then(() => {
       properties: ['openDirectory']
     })
 
-    evt.reply('selectDirectory', result)
+    if (result) evt.reply('selectDirectory', result)
+  })
+
+  ipcMain.on('dbInit', (evt, args) => {
+    // const dbPath = path.join(app.getAppPath('appData'), 'appData', 'app.db')
+    const dbPath = path.join('./', 'appData', 'app.db')
+    
+    // const datastore = Datastore.create({
+    //   autoload: true,
+    //   filename: dbPath
+    // })
+
+    evt.reply('db', dbPath)
   })
 })
 

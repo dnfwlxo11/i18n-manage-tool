@@ -10,7 +10,9 @@
     "electron:dev": "concurrently -k \"cross-env NODE_ENV=development && yarn dev --port 4000\" \"wait-on tcp:4000 && electron .\""
   },
   "dependencies": {
+    "@electron/remote": "^2.1.1",
     "googleapis": "^129.0.0",
+    "nedb-promises": "^6.2.3",
     "sass": "^1.69.5",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5",

@@ -1,4 +1,5 @@
 // electron/preload.js
+const { remote, app } = require('electron')
 
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
