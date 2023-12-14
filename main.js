@@ -30,7 +30,7 @@ async function createWindow() {
   enable(mainWindow.webContents)
 
   if (env === 'development') await mainWindow.loadURL('http://localhost:4000')
-  else mainWindow.loadFile(path.join(__dirname, 'index.html'))
+  else mainWindow.loadFile(path.join(__dirname, 'out', 'build', 'index.html'))
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

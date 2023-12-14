@@ -7,10 +7,15 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "electron:dev": "concurrently -k \"cross-env NODE_ENV=development && yarn dev --port 4000\" \"wait-on tcp:4000 && electron .\""
+    "electron:dev": "concurrently -k \"cross-env NODE_ENV=development && yarn dev --port 4000\" \"wait-on tcp:4000 && electron .\"",
+    "electron:build": "electron-forge make",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "@electron/remote": "^2.1.1",
+    "electron-squirrel-startup": "^1.0.0",
     "googleapis": "^129.0.0",
     "nedb-promises": "^6.2.3",
     "sass": "^1.69.5",
@@ -19,6 +24,12 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@vitejs/plugin-vue": "^4.5.0",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
