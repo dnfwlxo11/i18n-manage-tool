@@ -110,7 +110,6 @@ const f_updateProject = async (data) => {
 
 const f_init = async () => {
   _data.value = await findAllData()
-  console.log(_data.value)
 }
 
 onMounted(async () => {

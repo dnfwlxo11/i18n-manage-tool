@@ -24,7 +24,6 @@ export async function connGoogleApis(spreadsheetId, apiJson) {
   })
 
   const sheets = content.data.sheets
-  console.log(sheets, 'sheets')
   for await (let sheet of sheets) {
     const sheetName = sheet.properties.title
     const sheetId = sheet.properties.sheetId

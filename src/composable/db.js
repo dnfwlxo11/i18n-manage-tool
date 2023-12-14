@@ -34,6 +34,10 @@ async function findDataByFilter(filter) {
   return response
 }
 
+async function updateDataByFilter(filter, data) {
+  await datastore.update(filter, data)
+}
+
 async function updateDataById(id, data) {
   await datastore.update({ _id: id }, data)
 }
@@ -51,6 +55,7 @@ export {
   findAllDataCount,
   findAllData,
   findDataById,
+  updateDataByFilter,
   updateDataById,
   deleteDataById,
   insertData,

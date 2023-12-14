@@ -7,7 +7,6 @@ function recursiveSetObj(baseObj, keys, value, count=0) {
   if (keys?.length === count) {
     return value?.trim().replace('\b', '')
   } else {
-    console.log(baseObj[key], keys.length, count, !baseObj?.[key])
     if (!baseObj?.[key] || typeof(baseObj?.[key]) === 'string') baseObj[key] = {}
 
     count += 1
@@ -21,7 +20,6 @@ function convertData(data) {
   const results = {}
 
   Object.values(data).forEach(({ sheetName, rows }, sheetIdx) => {
-    console.log(sheetName)
     let baseObj = {}
 
     rows?.map((row, idx) => {
@@ -34,23 +32,25 @@ function convertData(data) {
         if (item.includes('lang')) acc.push(item)
         return acc
       }, [])
-
-      console.log(keys, values, 'keys, values')
   
       values.map((lang) => {
         if (!baseObj?.[lang]) baseObj[lang] = {}
-        console.log(baseObj[lang], [ sheetName, ...keys ].length, [ sheetName, ...keys ])
         const langName = lang.split('_')[1]
         const tmpObj = recursiveSetObj(baseObj[lang], [ sheetName, ...keys ], (row?.[lang] || {}))
         
         results[langName] = { ...tmpObj, ...results[langName] }
       })
-
-      console.log('--------------------------')
     })
   })
 
   return results
+}
+
+function writeXLSX(path) {
+  if (!fs.existsSync(`./${filename}`)) fs.mkdirSync(`./${filename}`)
+  Object.keys(results || {}).map((lang) => {
+    fs.writeFileSync(`./${filename}/${lang}.json`, JSON.stringify(results[lang], null, 2), 'utf-8')
+  })
 }
 
 function readXLSX(path, filename) {
@@ -93,4 +93,5 @@ export {
   recursiveSetObj,
   convertData,
   readXLSX,
+  writeXLSX,
 }

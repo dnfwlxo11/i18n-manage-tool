@@ -3,6 +3,7 @@ const { initialize, enable } = require('@electron/remote/main')
 const Datastore = require('nedb-promises')
 const path = require('path')
 const env = process.env.NODE_ENV || 'development'
+const fs = require('fs')
 
 initialize()
 
@@ -19,7 +20,7 @@ async function createWindow() {
     width: 1280,
     height: 800,
     webPreferences: {
-      // preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
       // sandbox: false
@@ -32,7 +33,7 @@ async function createWindow() {
   else mainWindow.loadFile(path.join(__dirname, 'index.html'))
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
@@ -50,16 +51,16 @@ app.whenReady().then(() => {
     if (result) evt.reply('selectDirectory', result)
   })
 
-  ipcMain.on('dbInit', (evt, args) => {
-    // const dbPath = path.join(app.getAppPath('appData'), 'appData', 'app.db')
-    const dbPath = path.join('./', 'appData', 'app.db')
-    
-    // const datastore = Datastore.create({
-    //   autoload: true,
-    //   filename: dbPath
-    // })
+  ipcMain.on('writeXlsx', (evt, args) => {
+    const { path: projectPath, data } = args
+    // const basePath = `${path}/translations`
+    const basePath = path.join(projectPath, 'translations')
+    console.log(basePath)
 
-    evt.reply('db', dbPath)
+    if (!fs.existsSync(basePath)) fs.mkdirSync(basePath)
+    Object.keys(data || {}).map((lang) => {
+      fs.writeFileSync(`${basePath}/${lang}.json`, JSON.stringify(data[lang], null, 2), 'utf-8')
+    })
   })
 })
 

@@ -70,8 +70,8 @@
                   class="bg-transparent p-2"
                   :class="`focus:bg-[#cad5f3]`"
                   type="text" 
-                  @input="evt => _targetSheet.rows[rowIdx][key] = evt.target.value" 
-                  v-model="_targetSheet.rows[rowIdx][key]"
+                  @input="evt => (_sheets[_currentSheetIdx].rows[rowIdx][key] = evt.target.value, f_updateData())" 
+                  v-model="_sheets[_currentSheetIdx].rows[rowIdx][key]"
                 >
                 <span class="p-2" v-else>{{ data }}</span>
               </td>
@@ -89,16 +89,16 @@
           class="box-border h-full p-2 bg-slate-300 mr-[2px] font-semibold hover:bg-slate-400"
           v-for="(sheet, idx) of _sheets || []"
           :key="idx"
-          @click="_targetSheet = sheet"
+          @click="_targetSheet = sheet,_currentSheetIdx=idx"
         >
           {{ sheet.sheetName }}
         </div>
       </div>
-      <button v-if="r_excel" class="mt-auto hover:border-[#2962ec] hover:bg-white hover:text-[#2962ec] mr-3 p-2 pt-1 pb-1 bg-[#2962ec] text-white" @click="extractTranslateFile">프로젝트에 적용</button>
+      <button v-if="r_excel" class="mt-auto hover:border-[#2962ec] hover:bg-white hover:text-[#2962ec] mr-3 p-2 pt-1 pb-1 bg-[#2962ec] text-white" @click="f_extractTranslateFile">프로젝트에 적용</button>
     </div>
     <googleSheetSyncModal 
       v-if="_googleSheetModal" 
-      @modal:add="v => loadGoogleSheet(v.spreadsheetId, v.apiJson)"
+      @modal:add="v => f_loadGoogleSheet(v.spreadsheetId, v.apiJson)"
       @modal:close="_googleSheetModal=false"
     />
   </div>
@@ -109,29 +109,33 @@ import projectLeftSide from '../../components/nav/projectLeftSide.vue'
 import googleSheetSyncModal from '../../components/modal/googleSheetSync.vue'
 import svgIcon from '../../components/basic/svgIcon.vue'
 
+const { google } = require('googleapis')
+const { ipcRenderer } = require('electron')
 import * as XLSX from 'xlsx'
+import { findDataByFilter, updateDataByFilter } from '../../composable/db.js'
 import { connGoogleApis } from '../../composable/googleSheet.js'
 import { convertData } from '../../composable/extractor.js'
-const { google } = require('googleapis')
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const r_excel = ref()
 const _filename = ref()
 const _sheets = ref([])
+const _currentSheetIdx = ref(0)
 const _targetSheet = ref()
 const _googleSheetModal = ref(false)
 const _googleSync = ref(false)
 
-const f_readXlsx = (evt) => {
+const f_readXlsx = async (evt) => {
   let input = evt.target;
 
   _sheets.value = []
 
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     let data = reader.result;
     let workBook = XLSX.read(data, { type: 'binary' })
     workBook.SheetNames.forEach((sheetName) => {
@@ -142,24 +146,53 @@ const f_readXlsx = (evt) => {
     
     _targetSheet.value = _sheets.value[0]
     _filename.value = input.files[0].name
-  };
+    await f_updateData()
+  }
 
   reader.readAsBinaryString(input.files[0])
 }
 
-const loadGoogleSheet = async (spreadsheetId, apiJson) => {
+const f_loadGoogleSheet = async (spreadsheetId, apiJson) => {
   const result = await connGoogleApis(spreadsheetId, apiJson)
 
   _sheets.value = result
   _targetSheet.value = _sheets.value[0]
   _googleSheetModal.value = false
+
+  await f_updateData()
 }
 
-const extractTranslateFile = () => {
+const f_updateData = async () => {
+  console.log('update data')
+  const { id } = route.params
+  const target = (await findDataByFilter({ projectName: id }))[0]
+
+  await updateDataByFilter({ _id: target._id }, { ...target, data: _sheets.value })
+}
+
+const f_extractTranslateFile = async () => {
+  const { id } = route.params
+  const { projectPath } = (await findDataByFilter({ projectName: id }))[0]
   const result = convertData(_sheets.value)
 
-
+  ipcRenderer.send('writeXlsx', {
+    path: projectPath,
+    data: result,
+  })
 }
+
+const f_init = async () => {
+  const { id } = route.params
+  const { data } = (await findDataByFilter({ projectName: id }))[0]
+
+  _sheets.value = data
+  if (_sheets.value?.length) _targetSheet.value = _sheets.value[0]
+  console.log(_sheets.value)
+}
+
+onMounted(async () => {
+  await f_init()
+})
 </script>
 
 <style lang="scss" scoped>
