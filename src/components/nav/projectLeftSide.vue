@@ -6,7 +6,7 @@
         @click="router.go(-1)"
       >
         <svgIcon 
-          src="/icons/chevron-left.svg" 
+          src="./svgs/chevron-left.svg" 
           width="34px"
           height="34px"
           color="rgba(255, 255, 255, 1)"

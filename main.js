@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const { initialize, enable } = require('@electron/remote/main')
 const Datastore = require('nedb-promises')
 const path = require('path')
-const env = process.env.NODE_ENV || 'development'
+const env = process.env.NODE_ENV
 const fs = require('fs')
 
 initialize()
@@ -20,7 +20,7 @@ async function createWindow() {
     width: 1280,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      // preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
       // sandbox: false
@@ -29,8 +29,9 @@ async function createWindow() {
 
   enable(mainWindow.webContents)
 
+  console.log(env)
   if (env === 'development') await mainWindow.loadURL('http://localhost:4000')
-  else mainWindow.loadFile(path.join(__dirname, 'out', 'build', 'index.html'))
+  else mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'))
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

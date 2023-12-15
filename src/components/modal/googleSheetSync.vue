@@ -13,7 +13,7 @@
             <span class="mr-2">스프레드시트 ID</span>
             <svgIcon 
               class="mt-auto mb-auto"
-              src="/icons/alert-circle-outline.svg" 
+              src="./svgs/alert-circle-outline.svg" 
               width="14px"
               height="14px"
               color="rgba(57, 71, 86, 1)"
@@ -31,7 +31,7 @@
             <span class="mr-2">API json 파일</span>
             <svgIcon 
               class="mt-auto mb-auto"
-              src="/icons/alert-circle-outline.svg" 
+              src="./svgs/alert-circle-outline.svg" 
               width="14px"
               height="14px"
               color="rgba(57, 71, 86, 1)"
@@ -90,7 +90,7 @@ const {
 } = toRefs($props)
 
 const r_input = ref()
-const _spreadsheetId = ref('1FCu2fXLpyeanpYiQeePN7oRrGyncrqx7QtbdJesqvJI')
+const _spreadsheetId = ref()
 const _filename = ref()
 const _apiJson = ref()
 

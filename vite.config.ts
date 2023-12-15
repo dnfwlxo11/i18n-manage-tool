@@ -1,17 +1,15 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-const path = require("path")
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === "production" ? path.resolve(__dirname, "dist") : "",
-  build: {
-    outDir: 'out/bulid'
-  },
+  base: process.env.NODE_ENV === "development" ? "." : "./",
   plugins: [vue()],
   resolve: {
     alias: {
-      '@/*': path.resolve(__dirname, './src')
+      '@/': resolve(__dirname, './src'),
+      './svgs/': resolve(__dirname, 'public/svgs')
     }
-  },
+  }
 })

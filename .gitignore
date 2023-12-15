@@ -27,4 +27,5 @@ dist-ssr
 .vscode
 appData
 
-out/
+dist/**/*
+dist_electron/**/*

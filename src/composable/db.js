@@ -4,7 +4,7 @@ const path = require('path')
 
 const Datastore = require('nedb-promises')
 
-const dbPath = path.join(app.getAppPath('appData'), 'appData', 'app.db')
+const dbPath = path.join(app.getPath('appData'), 'appData', 'app.db')
 const datastore = Datastore.create({
   autoload: true,
   filename: dbPath

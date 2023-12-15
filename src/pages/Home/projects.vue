@@ -3,44 +3,46 @@
     <div class="title text-2xl mb-5 font-bold">
       Projects
     </div>
-    <div v-if="_data?.length" class="projects grid grid-cols-3 gap-8">
-      <div 
-        v-for="item of _data"
-        class="hover:cursor-pointer shadow-lg relative p-4 flex flex-col align-middle rounded-md min-h-[240px]"
-        @click="router.push(`/project/${item.projectName}`)"
-      >
-        <div class="image_wrapper w-14 mb-4">
-          <img class="h-full w-full object-contain" src="/vite.svg">
-        </div>
-        <div class="project_name text-md mb-4 font-semibold text-lg">
-          {{ item.projectName }}
-        </div>
-        <div class="languages flex flex-wrap gap-2 mt-auto">
-          <badge :content="'한국어'" />
-          <badge :content="'영어'" />
-          <badge :content="'네팔어'" />
-          <badge :content="'태국어'" />
-          <badge :content="'베트남어'" />
-        </div>
+    <div class="projects grid grid-cols-3 gap-8">
+      <template v-if="_data?.length">
         <div 
-          class="absolute top-4 right-4"
-          @click.stop="f_editProject(item)"
+          v-for="item of _data"
+          class="hover:cursor-pointer shadow-lg relative p-4 flex flex-col align-middle rounded-md min-h-[240px]"
+          @click="router.push(`/project/${item.projectName}`)"
         >
-          <svgIcon 
-            src="/icons/edit-outline.svg" 
-            width="24px"
-            height="24px"
-            color="rgba(193, 193, 193, 1)"
-          />
+          <div class="image_wrapper w-14 mb-4">
+            <img class="h-full w-full object-contain" src="/vite.svg">
+          </div>
+          <div class="project_name text-md mb-4 font-semibold text-lg">
+            {{ item.projectName }}
+          </div>
+          <div class="languages flex flex-wrap gap-2 mt-auto">
+            <badge :content="'한국어'" />
+            <badge :content="'영어'" />
+            <badge :content="'네팔어'" />
+            <badge :content="'태국어'" />
+            <badge :content="'베트남어'" />
+          </div>
+          <div 
+            class="absolute top-4 right-4"
+            @click.stop="f_editProject(item)"
+          >
+            <svgIcon 
+              src="./svgs/edit-outline.svg" 
+              width="24px"
+              height="24px"
+              color="rgba(193, 193, 193, 1)"
+            />
+          </div>
         </div>
-      </div>
+      </template>
       <div 
         class="hover:cursor-pointer flex flex-col justify-center min-h-[240px] rounded-md shadow-md"
         @click="f_createProject"
       >
         <svgIcon 
           class="block ml-auto mr-auto mb-5"
-          src="/icons/sticker-plus-outline.svg" 
+          src="./svgs/sticker-plus-outline.svg" 
           width="40px"
           height="40px"
           color="rgba(193, 193, 193, 1)"

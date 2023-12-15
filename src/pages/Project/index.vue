@@ -7,7 +7,7 @@
         @click="router.go(-1)"
       >
         <svgIcon 
-          src="/icons/chevron-left.svg" 
+          src="./svgs/chevron-left.svg" 
           width="34px"
           height="34px"
           color="rgba(0, 0, 0, 1)"
@@ -22,7 +22,7 @@
           <input class="box-border pl-3 pr-2" type="text" placeholder="검색어를 입력해주세요.">
           <svgIcon 
             class="mr-1 mt-auto mb-auto"
-            src="/icons/magnify.svg" 
+            src="./svgs/magnify.svg" 
             width="20px"
             height="20px"
             color="rgba(148, 163, 184, 1)"
