@@ -62,7 +62,7 @@
               <td 
                 :class="{ 'sticky z-[1]': key.includes('key') }"
                 class="text-sm font-semibold min-w-[100px] box-border border-r-[1px] border-b-[1px] border-white"
-                v-for="(data, key, idx) in row"
+                v-for="(data, key, idx) in _targetSheet?.rows?.[0]"
                 :key="key"
               >
                 <input 
