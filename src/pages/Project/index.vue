@@ -18,7 +18,7 @@
         <div class="text-2xl font-bold">
           프로젝트 {{ useRoute().params.id }}  
         </div>
-        <div class="flex ml-auto border-[0.5px] border-slate-400 rounded-[24px] box-border p-1">
+        <!-- <div class="flex ml-auto border-[0.5px] border-slate-400 rounded-[24px] box-border p-1">
           <input class="box-border pl-3 pr-2" type="text" placeholder="검색어를 입력해주세요.">
           <svgIcon 
             class="mr-1 mt-auto mb-auto"
@@ -27,7 +27,7 @@
             height="20px"
             color="rgba(148, 163, 184, 1)"
           />
-        </div>
+        </div> -->
       </div>
       <div class="mb-7">
         <button v-if="r_excel" class="border-[#2962ec] text-[#2962ec] mr-3 p-2 pt-1 pb-1 hover:bg-[#2962ec] hover:text-white" @click="r_excel.click()">엑셀 가져오기</button>
@@ -79,10 +79,10 @@
           </tbody>
         </table>
       </div>
-      <div v-else class="empty">
+      <!-- <div v-else class="empty">
         <span class="mr-3">아직 번역 시트가 존재하지 않습니다.</span>
         <button class="bg-slate-300 text-black mr-3 p-2 pt-1 pb-1">새로만들기</button>
-      </div>
+      </div> -->
       <div v-if="_sheets?.length" class="mb-3 flex opacity-20 hover:opacity-100 w-full overflow-auto h-[60px]">
         <div 
           :class="{ 'bg-slate-400': sheet.sheetName === _targetSheet.sheetName }"

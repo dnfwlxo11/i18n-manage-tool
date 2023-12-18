@@ -11,7 +11,8 @@
     "electron:dev": "concurrently -k \"cross-env NODE_ENV=development yarn dev --port 4000\" \"wait-on tcp:4000 && cross-env NODE_ENV=development electron .\"",
     "electron:builder": "electron-builder",
     "build:for:electron": "cross-env NODE_ENV=production vue-tsc && cross-env NODE_ENV=production vite build",
-    "app:build": "yarn build:for:electron && yarn electron:builder"
+    "app:build:mac": "yarn build:for:electron && electron-builder --mac",
+    "app:build:win": "yarn build:for:electron && electron-builder --win"
   },
   "dependencies": {
     "googleapis": "^129.0.0",
@@ -42,7 +43,13 @@
     "productName": "i18n Management Tool",
     "copyright": "Copyright © 2023 ${author}",
     "mac": {
-      "category": "public.app-category.utilities"
+      "target": {
+        "target": "default",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
     },
     "win": {
       "target": [
@@ -64,6 +71,7 @@
     },
     "files": [
       "dist/**/*",
+      "node_modules/**/*",
       "main.js"
     ],
     "directories": {
