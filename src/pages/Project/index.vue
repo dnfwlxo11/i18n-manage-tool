@@ -76,8 +76,9 @@
                   @input="evt => (_sheets[_currentSheetIdx].rows[rowIdx][key] = evt.target.value, f_updateData())" 
                   v-model="_sheets[_currentSheetIdx].rows[rowIdx][key]"
                 >
-                <span class="p-2" v-else>{{ data !== 'EMPTY_CELL' ? data : '' }}</span>
-                <!-- <span class="p-2" v-else>{{ data }}</span> -->
+                <span class="p-2" v-else>
+                  {{ _sheets[_currentSheetIdx].rows[rowIdx][key] !== 'EMPTY_CELL' ? _sheets[_currentSheetIdx].rows[rowIdx][key] : '' }}
+                </span>
               </td>
             </tr>
           </tbody>
