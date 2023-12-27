@@ -82,13 +82,13 @@
 </template>
 
 <script setup>
-import { findAllData, insertData, updateDataById } from '../../composable/db.js'
+import { findAllData, insertData, updateDataById } from '@/composable/db.js'
 import { useRouter } from 'vue-router'
 import { nextTick, onMounted, ref } from 'vue'
-import svgIcon from '../../components/basic/svgIcon.vue'
-import badge from '../../components/basic/badge.vue'
-import projectSettingModal from '../../components/modal/projectSetting.vue'
-import removeProjectModal from '../../components/modal/removeProject.vue'
+import svgIcon from '@/components/basic/svgIcon.vue'
+import badge from '@/components/basic/badge.vue'
+import projectSettingModal from '@/components/modal/projectSetting.vue'
+import removeProjectModal from '@/components/modal/removeProject.vue'
 
 const _isProjectSetting = ref(false)
 const _isProjectRemove = ref(false)

@@ -34,10 +34,10 @@
 </template>
 
 <script setup>
-import { deleteDataById } from '../../composable/db.js'
+import { deleteDataById } from '@/composable/db.js'
 import { computed, toRefs, ref, watch } from 'vue'
 const { ipcRenderer } = require('electron')
-import svgIcon from '../../components/basic/svgIcon.vue'
+import svgIcon from '@/components/basic/svgIcon.vue'
 
 const $props = defineProps({
   data: {

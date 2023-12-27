@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import svgIcon from '../../components/basic/svgIcon.vue'
+import svgIcon from '@/components/basic/svgIcon.vue'
 
 import { computed, toRefs, ref } from 'vue'
 const { ipcRenderer, dialog, remote } = require('electron')

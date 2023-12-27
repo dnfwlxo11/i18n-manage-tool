@@ -16,7 +16,7 @@
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted, ref, computed } from 'vue'
 const { ipcRenderer, dialog, remote } = require('electron')
-import leftSideNav from '../../components/nav/leftSide.vue'
+import leftSideNav from '@/components/nav/leftSide.vue'
 
 import projectPage from './projects.vue'
 

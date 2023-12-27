@@ -110,15 +110,16 @@
 </template>
 
 <script setup>
-import googleSheetSyncModal from '../../components/modal/googleSheetSync.vue'
-import svgIcon from '../../components/basic/svgIcon.vue'
+// '@/components/modal/googleSheetSync.vue'
+import googleSheetSyncModal from '@/components/modal/googleSheetSync.vue'
+import svgIcon from '@/components/basic/svgIcon.vue'
 
 const { google } = require('googleapis')
 const { ipcRenderer } = require('electron')
 import * as XLSX from 'xlsx'
-import { findDataByFilter, updateDataByFilter } from '../../composable/db.js'
-import { connGoogleApis } from '../../composable/googleSheet.js'
-import { convertData } from '../../composable/extractor.js'
+import { findDataByFilter, updateDataByFilter } from '@/composable/db.js'
+import { connGoogleApis } from '@/composable/googleSheet.js'
+import { convertData } from '@/composable/extractor.js'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, computed } from 'vue'
 

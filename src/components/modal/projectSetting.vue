@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { updateDataById, findDataByFilter } from '../../composable/db.js'
+import { updateDataById, findDataByFilter } from '@/composable/db.js'
 import { computed, toRefs, ref, watch } from 'vue'
 const { ipcRenderer } = require('electron')
 
