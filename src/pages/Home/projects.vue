@@ -24,11 +24,22 @@
             <badge :content="'베트남어'" />
           </div>
           <div 
-            class="absolute top-4 right-4"
+            class="absolute top-4 right-12"
             @click.stop="f_editProject(item)"
           >
             <svgIcon 
               src="./svgs/edit-outline.svg" 
+              width="24px"
+              height="24px"
+              color="rgba(193, 193, 193, 1)"
+            />
+          </div>
+          <div 
+            class="absolute top-4 right-4"
+            @click.stop="f_removeProject(item)"
+          >
+            <svgIcon 
+              src="./svgs/close.svg" 
               width="24px"
               height="24px"
               color="rgba(193, 193, 193, 1)"
@@ -60,6 +71,13 @@
       @modalUpdate="f_updateProject"
       @modalClose="_isProjectSetting=false" 
     />
+    <removeProjectModal 
+      v-if="_isProjectRemove" 
+      :data="_currentData"
+      :type="_currentSettingType"
+      @modalRemove="(_isProjectRemove=false,_currentProjectTitle='',_currentProjectPath='',f_init())"
+      @modalClose="_isProjectRemove=false" 
+    />
   </div>
 </template>
 
@@ -70,8 +88,10 @@ import { nextTick, onMounted, ref } from 'vue'
 import svgIcon from '../../components/basic/svgIcon.vue'
 import badge from '../../components/basic/badge.vue'
 import projectSettingModal from '../../components/modal/projectSetting.vue'
+import removeProjectModal from '../../components/modal/removeProject.vue'
 
 const _isProjectSetting = ref(false)
+const _isProjectRemove = ref(false)
 const router = useRouter()
 
 const _data = ref()
@@ -108,6 +128,11 @@ const f_updateProject = async (data) => {
   await f_init()
 
   _isProjectSetting.value = false
+}
+
+const f_removeProject = (data) => {
+  _currentData.value = data
+  _isProjectRemove.value = true
 }
 
 const f_init = async () => {

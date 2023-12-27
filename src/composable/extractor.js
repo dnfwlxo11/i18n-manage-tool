@@ -7,10 +7,12 @@ function recursiveSetObj(baseObj, keys, value, count=0) {
   if (keys?.length === count) {
     return value?.trim().replace('\b', '')
   } else {
-    if (!baseObj?.[key] || typeof(baseObj?.[key]) === 'string') baseObj[key] = {}
+    if ((!baseObj?.[key] || typeof(baseObj?.[key]) === 'string') && key !== 'EMPTY_CELL') baseObj[key] = {}
 
     count += 1
-    baseObj[key] = recursiveSetObj(baseObj[key], keys, value, count)
+    
+    if (key === 'EMPTY_CELL') baseObj[key] = recursiveSetObj(baseObj, keys, value, count)
+    else baseObj[key] = recursiveSetObj(baseObj[key], keys, value, count)
   }
 
   return baseObj

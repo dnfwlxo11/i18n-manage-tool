@@ -1,18 +1,21 @@
 <template>
   <div class="flex h-full">
-    <!-- <projectLeftSide :menus="['한국어', '영어', '네팔어', '태국어', '베트남어']" /> -->
     <div class="max-h-max flex-1 p-10 overflow-auto flex flex-col">
-      <div 
-        class="inline-flex mb-5 hover:cursor-pointer"
-        @click="router.go(-1)"
-      >
+      <div class="inline-flex mb-5">
         <svgIcon 
+          class="hover:cursor-pointer"
           src="./svgs/chevron-left.svg" 
           width="34px"
           height="34px"
           color="rgba(0, 0, 0, 1)"
+          @click="router.go(-1)"
         />
-        <span class="mt-auto mb-auto text-md font-bold">뒤로가기</span>
+        <span 
+          class="mt-auto mb-auto text-md font-bold hover:cursor-pointer"
+          @click="router.go(-1)"
+        >
+          뒤로가기
+        </span>
       </div>
       <div class="flex mb-3">
         <div class="text-2xl font-bold">
@@ -47,8 +50,8 @@
               <th 
                 :class="{ 'sticky top-0 z-[2]': key.includes('key') }"
                 class="text-md min-w-[100px] bg-[#2962ec] box-border text-white p-2 border-r-[1px] border-white"
-                v-for="(data, key) in _targetSheet?.rows?.[0]" 
-                :key="key"
+                v-for="(key, idx) of c_tableHead" 
+                :key="idx"
               >
                 {{ key }}
               </th>
@@ -62,7 +65,7 @@
               <td 
                 :class="{ 'sticky z-[1]': key.includes('key') }"
                 class="text-sm font-semibold min-w-[100px] box-border border-r-[1px] border-b-[1px] border-white"
-                v-for="(data, key, idx) in row"
+                v-for="(data, key, idx) in f_emptyKeyFill(row, c_tableHead)"
                 :key="key"
               >
                 <input 
@@ -73,7 +76,8 @@
                   @input="evt => (_sheets[_currentSheetIdx].rows[rowIdx][key] = evt.target.value, f_updateData())" 
                   v-model="_sheets[_currentSheetIdx].rows[rowIdx][key]"
                 >
-                <span class="p-2" v-else>{{ data }}</span>
+                <span class="p-2" v-else>{{ data !== 'EMPTY_CELL' ? data : '' }}</span>
+                <!-- <span class="p-2" v-else>{{ data }}</span> -->
               </td>
             </tr>
           </tbody>
@@ -105,7 +109,6 @@
 </template>
 
 <script setup>
-import projectLeftSide from '../../components/nav/projectLeftSide.vue'
 import googleSheetSyncModal from '../../components/modal/googleSheetSync.vue'
 import svgIcon from '../../components/basic/svgIcon.vue'
 
@@ -116,7 +119,7 @@ import { findDataByFilter, updateDataByFilter } from '../../composable/db.js'
 import { connGoogleApis } from '../../composable/googleSheet.js'
 import { convertData } from '../../composable/extractor.js'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -173,12 +176,43 @@ const f_updateData = async () => {
 const f_extractTranslateFile = async () => {
   const { id } = route.params
   const { projectPath } = (await findDataByFilter({ projectName: id }))[0]
+  // const extractData = _sheets.value.map((sheet) => {
+  //   sheet.rows = Object.entries(sheet.rows).reduce((acc, [key, value]) => {
+  //     console.log(key, value, 'key, value')
+  //     if (value !== 'EMPTY_CELL') acc[key] = value
+
+  //     return acc
+  //   })
+  // })
+  console.log(_sheets.value)
   const result = convertData(_sheets.value)
 
   ipcRenderer.send('writeXlsx', {
     path: projectPath,
     data: result,
   })
+}
+
+const c_tableHead = computed(() => {
+  const keys = []
+
+  _targetSheet.value?.rows?.map((item) => {
+    keys.push(...Object.keys(item))
+  })
+
+  return Array.from(new Set(keys)).sort((a, b) => {
+    return (b.includes('key')) - (a.includes('key'))
+  })
+})
+
+const f_emptyKeyFill = (target, fullKey) => {
+  fullKey.map((key) => {
+    if (!target.hasOwnProperty(key)) target[key] = 'EMPTY_CELL'
+  })
+
+  return Object.entries(target).sort((a, b) => {
+    return (b?.[0]?.includes('key')) - (a?.[0]?.includes('key'))
+  }).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 }
 
 const f_init = async () => {
