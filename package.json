@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@electron/remote": "^2.1.1",
-    "@vitejs/plugin-vue": "^4.5.0",
+    "@vitejs/plugin-vue": "^4.6.2",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
@@ -34,9 +34,9 @@
     "electron-reload": "^2.0.0-alpha.1",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0",
-    "vue-tsc": "^1.8.22",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19",
+    "vue-tsc": "^2.2.10",
     "wait-on": "^7.2.0"
   },
   "build": {
